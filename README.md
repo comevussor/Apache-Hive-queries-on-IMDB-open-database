@@ -44,7 +44,8 @@ field2, type2,
 STORED AS ORC;
 
 INSERT INTO imdb_tablename
-        SELECT * FROM ext_imdb_tablename;
+SELECT *
+FROM   ext_imdb_tablename;  
 
 SELECT * FROM imdb_tablename LIMIT 50;
 ```
