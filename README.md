@@ -16,12 +16,12 @@ gunzip tablename.tsv.gz
 ```
 Rename file if necessary (to remove . for instance).
 ```
-hdfs dfs -put <tablename.tsv> imdb_tablename
+hdfs dfs -put tablename.tsv imdb_tablename
 ```
 
 Make sure you are using the proper database and have proper privileges on it (Hive)
 ```
-use <my_db>;
+use my_db;
 ```
 Create external table pointing to the file.
 ```
@@ -53,38 +53,40 @@ SELECT * FROM imdb_tablename LIMIT 50;
 
 ### 1) Number of titles with duration superior than 2 hours.
 ```
-SELECT COUNT(*) 
-FROM imdb_title_basics 
-WHERE runtimeminutes > 120;
+SELECT Count(*)
+FROM   imdb_title_basics
+WHERE  runtimeminutes > 120;  
 ```
 Result : 60446
 
 ### 2) Average runtime (minutes) of titles containing the string "world"
 ```
-SELECT AVG(runtimeminutes) 
-FROM imdb_title_basics
-WHERE primarytitle LIKE "%world%";
+SELECT Avg(runtimeminutes)
+FROM   imdb_title_basics
+WHERE  primarytitle LIKE "%world%";  
 ```
 Result : 43.58
 
 ### 3) Average rating of titles being comedies
 `JOIN` is better than a cartesian product `FROM tableA, tableB` when dealing with big data to avoid possible explosion in size. Result is an array. `array_contains()` is a Hive buit-in user-defined function.
 ```
-SELECT AVG(averagerating) 
-FROM imdb_title_ratings
-JOIN imdb_title_basics
-ON imdb_title_ratings.tconst = imdb_title_basics.tconst
-WHERE array_contains(imdb_title_basics.genres, "Comedy");
+SELECT Avg(averagerating)
+FROM   imdb_title_ratings
+       JOIN imdb_title_basics
+         ON imdb_title_ratings.tconst = imdb_title_basics.tconst
+WHERE  Array_contains(imdb_title_basics.genres, "comedy")  
+;
 ```
 Result : 6.97
 
 ### 4) Average rating of titles not being comedies
 ```
-SELECT AVG(averagerating) 
-FROM imdb_title_ratings
-JOIN imdb_title_basics 
-ON imdb_title_ratings.tconst = imdb_title_basics.tconst
-WHERE NOT array_contains(imdb_title_basics.genres, "Comedy");
+SELECT Avg(averagerating)
+FROM   imdb_title_ratings
+       JOIN imdb_title_basics
+         ON imdb_title_ratings.tconst = imdb_title_basics.tconst
+WHERE  NOT Array_contains(imdb_title_basics.genres, "comedy")
+;
 ```
 Result : 6.88
 
@@ -102,26 +104,23 @@ To save space, certain fields in IMDB dataset are given as arrays :
 In that case, to be able to filter on directors, it is necessary first to explode the column in an additional column, we name it `L1.one_director`. It is possible to keep on using to table names (here `T3` and `L1`) or rename the whole thing (here `T1`). `explode()` is a buit-in user-defined function, result is a true table, not an array. 
 
 ```
-SELECT T6.primarytitle, T5.averagerating
-  FROM
-    (SELECT T1.tconst
-      FROM
-        (select T3.tconst, L1.one_director
-          FROM imdb_title_crew
-        AS T3
-          LATERAL VIEW explode(director) L1 AS one_director)
-        AS T1
-  JOIN imdb_name_basics AS T2
-  ON T1.one_director = T2.nconst
-  WHERE T2.primaryname = "Quentin Tarantino")
-  AS T4
-JOIN imdb_title_ratings as T5
-ON T4.tconst = T5.tconst
-JOIN imdb_title_basics as T6
-ON T4.tconst = T6.tconst
-WHERE T6.titletype = "movie"
-ORDER BY T5.averagerating DESC
-LIMIT 5
+ SELECT   t6.primarytitle,
+         t5.averagerating
+FROM     (
+                SELECT t1.tconst
+                FROM   (
+                              SELECT t3.tconst,
+                                     l1.one_director
+                              FROM   imdb_title_crew AS t3 lateral VIEW explode(director) L1 as one_director) AS t1
+                JOIN   imdb_name_basics AS t2
+                ON     t1.one_director = t2.nconst
+                WHERE  t2.primaryname = "Quentin Tarantino") AS t4
+JOIN     imdb_title_ratings                                  AS t5
+ON       t4.tconst = t5.tconst
+JOIN     imdb_title_basics AS t6
+ON       t4.tconst = t6.tconst
+WHERE    t6.titletype = "movie"
+ORDER BY t5.averagerating DESC limit 5 
 ;
 ```
 Result
