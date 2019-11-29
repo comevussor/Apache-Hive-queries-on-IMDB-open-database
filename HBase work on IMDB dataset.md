@@ -1,4 +1,4 @@
-#HBase work based on IMDB dataset
+# HBase work based on IMDB dataset
 
 I'm using an edge node of an Hadoop cluster.
 
