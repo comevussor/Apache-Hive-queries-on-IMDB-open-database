@@ -3,9 +3,9 @@
 
 ## CAP theorem
 For any big data base we want :
-- Consistent : only one possible result for one query at a certain time
-- Available : data is directly available without waiting for some synchronization time
-- Partition tolerant
+- Consistency : only one possible result for one query at a certain time
+- Availability : data is directly available without waiting for some synchronization time
+- Partition tolerance
 
 BUT unfortunately, only 2 conditions out of 3 can be achieved simulaneously !
 
