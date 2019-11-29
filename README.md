@@ -39,9 +39,11 @@ When a client starts writing on a region server :
 - when Memcache is full, it is flushed in an HFile.
 
 When a client reads data :
-- region server fetches the data from HFile and joins it with Memcache if any.
+- region server fetches the data from HFile and joins it with Memcache (most recent data, used as a buffer) if any.
 Remember we are in HDFS, everything is stored in blocks. So an HFile may be made of 100 blocks.
 When data is read from a block, the whole block is loaded in RAM to anticipate future needs.
 Data is stored according to row key.
 
 => It is important do design row key adequately to improve access speed and save RAM. 
+
+=> HBase is very useful when mostly working with rows. While Hive is useful to work with columns, agregations.
