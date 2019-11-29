@@ -1,5 +1,5 @@
 # Apache-Hive-queries-on-IMDB-open-database
-To see some specificities of Hive queries 
+To see some specificities of Hive queries.
 
 IMDB data is downloadable here : https://www.imdb.com/interfaces/
 
