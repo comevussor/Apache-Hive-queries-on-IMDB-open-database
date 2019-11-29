@@ -1,4 +1,6 @@
-# HBase work based on IMDB dataset
+# HBase based on IMDB dataset
+
+## Create and fill a table
 
 I'm using an edge node of an Hadoop cluster.
 
@@ -27,3 +29,10 @@ If the vote is to be changed to 8 for instance :
 `put 'judgement', 'tt001_001', 'opinion:vote', '8', 'opinion:comments', 'Good enough', 'meta:title', 'tt001', 'meta:date', '20181215'`
 
 This will append the new data without removing the previous one. Date stamping will ensure that at reading time, the updated data is loaded.
+
+## Query HBase
+
+* HBase shell
+* SQL
+  * Apache Phoenix will translate SQL into low level HBase api for OLTP commands BUT not OLAP otherwise aggregation will be done locally, not distributed => big problems out of memory.
+  * Hive for OLAP : Hiver does not handle the storage, we just create an external table with adequate columns (=> restrict freedom of creating columns)
