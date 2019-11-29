@@ -34,10 +34,16 @@ This will append the new data without removing the previous one. Date stamping w
 
 * HBase shell
 * SQL
-  * Apache Phoenix will translate SQL into low level HBase api for OLTP commands BUT not OLAP otherwise aggregation will be done locally, not distributed => big problems out of memory.
+  * Apache Phoenix will translate SQL into low level HBase api for OLTP commands BUT not OLAP otherwise aggregation will be done locally, not distributed => big problems out of memory. It also allows ACID transactions 
   * Hive for OLAP : Hiver does not handle the storage, we just create an external table with adequate columns (=> restrict freedom of creating columns)
 
 If a region server crash, we loose Memcache and blockcache. WAL and HFile is on HDFS, still available.
 The region will be reassigned to another server which will download WAL and HFile.
 The WAL is replayed by the new region server to get the missing RAM data.
 During this process, the data is not available...
+
+### ACID transactions 
+- Atomicity : transactions are processed at once, no intermediate operation
+- Consistency : succeed or come back to previous state
+- Isolation : different users don't see each other's work
+- Durability : once transaction is done, database is updated even if there is a crash
