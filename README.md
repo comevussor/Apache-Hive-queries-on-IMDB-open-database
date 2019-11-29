@@ -1,5 +1,6 @@
 # Hadoop-and-Spark-ecosystems
 
+The content of this repository is my personal work based on the course given by Adaltas in DSTI in october 2019.
 
 ## CAP theorem
 For any big data base we want :
