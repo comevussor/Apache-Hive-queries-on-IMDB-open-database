@@ -14,3 +14,16 @@ When dealing with big data, we need partition tolerance. Therefore we have to ch
 For selling online, we would rather choose availability but for banking, we need consistency.
 
 HBase is a consistent (CP) type of DB. Cassandra is available (AP).
+
+## HBase
+### Design
+A table is defined with a set of column families.
+Columns are added at filling time on the fly.
+No need to fill empty fields with Null values.
+
+### HBase on HDFS
+Rows in a table are distributed in subsets called regions, stored in the worker nodes of the cluster.
+
+### HBase components
+HBase master : responsible for creating a table and communicating with slaves.
+Region servers : slaves.
