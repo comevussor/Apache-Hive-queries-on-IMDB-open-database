@@ -22,12 +22,12 @@ Columns are added at filling time on the fly.
 No need to fill empty fields with Null values.
 
 ### HBase on HDFS
-Rows in a table are distributed in subsets called regions, stored in the worker nodes of the cluster.
+Rows in a table are ordered by row key, distributed in subsets called regions, stored in the worker nodes of the cluster.
 Everything is stored in binary format.
 
 ### HBase components
 HBase master : responsible for creating a table and communicating with slaves. Usually with a stand by master attached for high availability.
-Region servers : slaves.
+Region servers : slaves, answering the client, notifying the master, compacting
 Zookeeper for high availability.
 
 If both masters think they are masters, we enter a split brain scenario, it is always very dangerous => needs shutdown.
@@ -35,11 +35,15 @@ To avoid that, we require a zookeeper quorum to choose the master server => choo
 
 When a client starts writing on a region server :
 - it starts writing events (row added for instance) on a WAL file : events are added one after the other, it is not a file modification.
-- data is stored in RAM in a Memcache
-- when Memcache is full, it is flushed in an HFile.
+- data is stored in RAM in a Memstore
+- when Memstore is full, it is flushed in an HFile.
+
+Region servers are also in charge of compaction : 
+- small compaction : bring together small HFiles 
+- major compaction : (once a week for instance) take all HFiles of a region and create one HFile per column family
 
 When a client reads data :
-- region server fetches the data from HFile and joins it with Memcache (most recent data, used as a buffer) if any.
+- region server fetches the data from HFile and joins it with Memstore (most recent data, used as a buffer) if any.
 Remember we are in HDFS, everything is stored in blocks. So an HFile may be made of 100 blocks.
 When data is read from a block, the whole block is loaded in RAM to anticipate future needs.
 Data is stored according to row key.
@@ -47,3 +51,52 @@ Data is stored according to row key.
 => It is important do design row key adequately to improve access speed and save RAM. 
 
 => HBase is very useful when mostly working with rows. While Hive is useful to work with columns, agregations.
+
+## Create and fill a table
+
+I'm using an edge node of an Hadoop cluster.
+
+Open HBase shell :
+
+(linux) `hbase shell`
+
+We want to create a table named judgement with 2 column families : opinion and meta :
+
+(HBase shell) `create 'judgement', 'opinion', 'meta'`
+
+Fill the table :
+
+`put 'judgement', 'tt001_001', 'opinion:vote', '7', 'opinion:comments', 'Good enough', 'meta:title', 'tt001', 'meta:date', '20181215'`
+
+For the row key, we could do something like : title+vote+username (or username hash for anonymity)
+
+View data : `scan 'judgement'`
+
+Get one row only :
+
+`get 'judgement', 'tt001_001'`
+
+If the vote is to be changed to 8 for instance :
+
+`put 'judgement', 'tt001_001', 'opinion:vote', '8', 'opinion:comments', 'Good enough', 'meta:title', 'tt001', 'meta:date', '20181215'`
+
+This will append the new data without removing the previous one. Date stamping will ensure that at reading time, the updated data is loaded.
+
+## Query HBase
+
+* HBase shell
+* SQL
+  * Apache Phoenix will translate SQL into low level HBase api for OLTP commands BUT not OLAP otherwise aggregation will be done locally, not distributed => big problems out of memory. It also allows ACID transactions 
+  * Hive for OLAP : Hiver does not handle the storage, we just create an external table with adequate columns (=> restrict freedom of creating columns)
+
+If a region server crash, we loose Memcache and blockcache. WAL and HFile is on HDFS, still available.
+The region will be reassigned to another server which will download WAL and HFile.
+The WAL is replayed by the new region server to get the missing RAM data.
+During this process, the data is not available...
+
+### ACID transactions 
+- Atomicity : transactions are processed at once, no intermediate operation
+- Consistency : succeed or come back to previous state
+- Isolation : different users don't see each other's work
+- Durability : once transaction is done, database is updated even if there is a crash
+
