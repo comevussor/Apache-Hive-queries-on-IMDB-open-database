@@ -1,1 +1,10 @@
 # Spark
+
+Having data in memory allows streaming, avoids I/O operations.
+
+Spark is an in-memory process engine, running on Hadoop : can use data from HDFS, Hive..., can distribute processing.
+
+It is open source and started in 2014, part of Apache.
+
+Good for data engineering processing : cleaning, moving...
+
