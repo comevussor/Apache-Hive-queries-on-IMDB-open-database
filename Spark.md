@@ -16,8 +16,8 @@ Write with :
 - Python : easier to write, but it will be executed in Java in the end and now, overhead is only 10%
 
 Submit job with :
-- spark-shell, pyspark
-- submit to spark
+- spark-shell pyspark
+- `submit to spark`
 - Notebook (Zeppelin)
 
 ## Spark core
@@ -26,3 +26,11 @@ Submit job with :
   - partitionned
   - persisted in memory (except if you don't use it for a while, it it flushed to HDFS)
 
+Possible operations on RDD :
+  - transformations : filtering, mapping, arrays to columns (flatmap) (all that with lambda function)
+  
+  Some transformations are only for key-value DB : reduceByKey
+  
+  - actions : collecting data (`collect()`), `count()`, collectin part of the data `take(n)`
+  
+Spark uses lazy evaluation : transformations will not be implemented until action is called.
