@@ -1,4 +1,4 @@
-# Hadoop-and-Spark-ecosystems
+# CAP theorem and HBase
 
 The content of this repository is my personal work based on the course given by Adaltas in DSTI in october 2019.
 
