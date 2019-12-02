@@ -66,11 +66,26 @@ We want to create a table named judgement with 2 column families : opinion and m
 
 Fill the table :
 
-`put 'judgement', 'tt001_001', 'opinion:vote', '7', 'opinion:comments', 'Good enough', 'meta:title', 'tt001', 'meta:date', '20181215'`
+```
+put 'judgement', 'tt001_001', 'opinion:vote', '7'
+put 'judgement', 'tt001_001', 'opinion:comments', 'Good enough'
+put 'judgement', 'tt001_001', 'meta:title', 'tt001'
+put 'judgement', 'tt001_001', 'meta:date', '20181215'
+```
 
 For the row key, we could do something like : title+vote+username (or username hash for anonymity)
 
 View data : `scan 'judgement'`
+
+yields 
+```
+ROW                       COLUMN+CELL
+ tt001_001                column=meta:date, timestamp=1575293588720, value=20181215
+ tt001_001                column=meta:title, timestamp=1575293575790, value=tt001
+ tt001_001                column=opinion:comments, timestamp=1575293553830, value=Good enough
+ tt001_001                column=opinion:vote, timestamp=1575293406626, value=7
+1 row(s)
+```
 
 Get one row only :
 
@@ -78,9 +93,9 @@ Get one row only :
 
 If the vote is to be changed to 8 for instance :
 
-`put 'judgement', 'tt001_001', 'opinion:vote', '8', 'opinion:comments', 'Good enough', 'meta:title', 'tt001', 'meta:date', '20181215'`
+`put 'judgement', 'tt001_001', 'opinion:vote', '8'`
 
-This will append the new data without removing the previous one. Date stamping will ensure that at reading time, the updated data is loaded.
+This will append the new data without removing the previous one. Timestamping will ensure that at reading time, the updated data is loaded.
 
 ## Query HBase
 
