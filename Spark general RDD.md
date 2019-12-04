@@ -18,7 +18,7 @@ Write with :
 Submit job with :
 - spark-shell pyspark
 - `submit to spark`
-- Notebook (Zeppelin)
+- Notebook (Zeppelin) with keyword : `%spark2.pyspark`
 
 ## Spark core
 - storage is based on Resilient distributed dataset (RDD) : collection of objects of different types
@@ -34,3 +34,10 @@ Possible operations on RDD :
   - actions : collecting data (`collect()`), `count()`, collectin part of the data `take(n)`
   
 Spark uses lazy evaluation : transformations will not be implemented until action is called.
+
+## Spark internals
+
+- spark application (also called the spark drive) : it is present on a singe machine of the cluster, responsible for distributing the work on the cluster through YARN. It also gives the spark context (`sc.`)
+
+
+
