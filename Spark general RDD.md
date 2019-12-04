@@ -37,7 +37,16 @@ Spark uses lazy evaluation : transformations will not be implemented until actio
 
 ## Spark internals
 
-- spark application (also called the spark drive) : it is present on a singe machine of the cluster, responsible for distributing the work on the cluster through YARN. It also gives the spark context (`sc.`)
+Spark application (also called the spark drive) : it is present on a singe machine of the cluster, responsible for distributing the work on the cluster through YARN. It also gives the spark context (`sc.`)
 
+For a `map` operation, if my RDD is split into n partitions (usually one per block or per CPU), there will be n tasks launched in each executor of each of the n workers.
 
+For a `reduceByKey` data will be shuffled first.
 
+=> chaining `map`is not costly compared to reducing transformations.
+
+## How to optimize the number of partitions of an RDD
+
+By default, we have 1 partition per CPU, but it results in idle time to wait for the slowest.
+
+Recommanded value is 3 partitions per CPU : each CPU will perform 3 tasks one after the other and the differences between each CPU will average out, resulting in less idle time.
