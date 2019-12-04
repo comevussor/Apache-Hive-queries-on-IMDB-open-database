@@ -49,4 +49,6 @@ For a `reduceByKey` data will be shuffled first.
 
 By default, we have 1 partition per CPU, but it results in idle time to wait for the slowest.
 
-Recommanded value is 3 partitions per CPU : each CPU will perform 3 tasks one after the other and the differences between each CPU will average out, resulting in less idle time.
+Recommended value is 3 partitions per CPU : each CPU will perform 3 tasks one after the other and the differences between each CPU will average out, resulting in less idle time.
+
+Adding too many partitions results in too much overhead.
