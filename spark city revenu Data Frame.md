@@ -30,6 +30,15 @@ rdd_store = rdd_raw.map( lambda line : (
 rdd_store.take(100)
 ```
 
+
+
+
+
+
+
+
+
+
 ## Compute some averages
 
 ```
