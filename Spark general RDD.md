@@ -20,7 +20,7 @@ Submit job with :
 - `submit to spark`
 - Notebook (Zeppelin) with keyword : `%spark2.pyspark`
 
-## Spark core
+## Spark core RDD
 - storage is based on Resilient distributed dataset (RDD) : collection of objects of different types
   - immutable (consistent with HDFS)
   - partitionned
@@ -32,7 +32,9 @@ Possible operations on RDD :
   Some transformations are only for key-value DB : reduceByKey
   
   - actions : collecting data (`collect()`), `count()`, collectin part of the data `take(n)`
-  
+
+It is a very flexible type of objects, enabling work based on raw text for instance, data without schema. But for regular tabular data, (join 2 tables for example), when we have a schema, we'd rather work with DataFrames
+
 Spark uses lazy evaluation : transformations will not be implemented until action is called.
 
 ## Spark internals
@@ -52,3 +54,15 @@ By default, we have 1 partition per CPU, but it results in idle time to wait for
 Recommended value is 3 partitions per CPU : each CPU will perform 3 tasks one after the other and the differences between each CPU will average out, resulting in less idle time.
 
 Adding too many partitions results in too much overhead.
+
+## Dataframes
+
+Dataframes store data in RDDs but with metadata (schema).
+
+They can load data from different sources : Hive tables (transform and save under a new Hive table), HDFS (csv, json, xml).
+
+By inheritance, dataframes are also immutable.
+
+
+
+
