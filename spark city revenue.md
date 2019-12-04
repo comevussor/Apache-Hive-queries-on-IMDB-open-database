@@ -1,4 +1,4 @@
-# How to load text files, re-arrange data, produce stats with pyspark
+# How to load text files, re-arrange data, produce stats with pyspark and RDD datasets
 
 I used Zeppelin notebook
 
