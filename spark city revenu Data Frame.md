@@ -221,7 +221,54 @@ df_total_store_2.show()
 
 ## Best store of the month
 
+```
+df_best_store = df.select(df.Month.alias("Month"), df.City.alias("City"), df.Store, df.Income.alias("Income")) \
+                    .groupBy(F.col("Month")) \
+                    .agg(F.max(F.col("Income")).alias("Income"))
+df_best_store.show()                
 
++-----+------+
+|Month|Income|
++-----+------+
+|  JAN|    51|
+|  FEB|    42|
+|  MAR|    44|
+|  APR|    57|
+|  MAY|    72|
+|  JUN|    85|
+|  JUL|    61|
+|  AUG|    45|
+|  SEP|    63|
+|  OCT|    68|
+|  NOV|    64|
+|  DEC|    71|
++-----+------+
+```
+
+```
+df_best_store_2 = df.join(df_best_store, ["Income", "Month"]) \
+                            .select(F.col("Month"), F.col("City"), F.col("Store"), F.col("Income")) \
+                            .orderBy(F.unix_timestamp(F.col("Month"), "MMM"))
+                    
+df_best_store_2.show()
+
++-----+-----+-----+------+
+|Month| City|Store|Income|
++-----+-----+-----+------+
+|  JAN|paris|    1|    51|
+|  FEB|paris|    2|    42|
+|  MAR|paris|    2|    44|
+|  APR|paris|    1|    57|
+|  MAY|paris|    2|    72|
+|  JUN|paris|    2|    85|
+|  JUL|paris|    1|    61|
+|  AUG|paris|    2|    45|
+|  SEP|paris|    2|    63|
+|  OCT|paris|    1|    68|
+|  NOV|paris|    2|    64|
+|  DEC|paris|    1|    71|
++-----+-----+-----+------+
+```
 
 
 
