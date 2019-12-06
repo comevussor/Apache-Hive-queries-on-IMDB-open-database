@@ -256,6 +256,8 @@ df_best_store.show()
 
 Join original table and intermediate one. A `select()` is required to avoid duplicated columns.
 
+Default join is inner.
+
 See also the month formatting.
 
 ```
@@ -281,4 +283,29 @@ df_best_store_2.show()
 |  NOV|paris|    2|    64|
 |  DEC|paris|    1|    71|
 +-----+-----+-----+------+
+```
+
+OR right join
+
+```
+df_best_store_2 = df.join(df_best_store, ["Income", "Month"], "right") \
+                            .orderBy(F.unix_timestamp(F.col("Month"), "MMM"))
+df_best_store_2.show()
+
++------+-----+-----+-----+
+|Income|Month| City|Store|
++------+-----+-----+-----+
+|    51|  JAN|paris|    1|
+|    42|  FEB|paris|    2|
+|    44|  MAR|paris|    2|
+|    57|  APR|paris|    1|
+|    72|  MAY|paris|    2|
+|    85|  JUN|paris|    2|
+|    61|  JUL|paris|    1|
+|    45|  AUG|paris|    2|
+|    63|  SEP|paris|    2|
+|    68|  OCT|paris|    1|
+|    64|  NOV|paris|    2|
+|    71|  DEC|paris|    1|
++------+-----+-----+-----+
 ```
