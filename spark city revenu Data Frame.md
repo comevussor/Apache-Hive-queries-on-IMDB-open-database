@@ -66,7 +66,7 @@ only showing top 20 rows
 ```
 from pyspark.sql import functions as F
 
-#reference a column : either df.Income or F.col("Income")
+# reference a column : either df.Income or F.col("Income")
 
 df_income = df.select(F.col("Income").alias("x_Income"))
 df_income.show()
