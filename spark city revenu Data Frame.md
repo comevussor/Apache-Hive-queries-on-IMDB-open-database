@@ -30,62 +30,202 @@ rdd_store = rdd_raw.map( lambda line : (
 rdd_store.take(100)
 ```
 
-
-
-
-
-
-
-
-
-
-## Compute some averages
+## Load data in dataframe
 
 ```
-tot_france = rdd_store.map( lambda row : (row[3], 1) ).reduce(lambda a,b : (a[0]+b[0], a[1]+b[1]) )
-print tot_france
+df = spark.createDataFrame(rdd_store, ('City', 'Store', 'Month', 'Income'))
+df.show(20)
 
-avg_france = tot_france[0] / tot_france[1]
-print "Overall monthly average by shop is ", avg_france
-
-avg_month = tot_france[0] / 12
-print "Overall monthly average for the brand is ", avg_month
++----------+-----+-----+------+
+|      City|Store|Month|Income|
++----------+-----+-----+------+
+|     anger|    1|  JAN|    13|
+|     anger|    1|  FEB|    12|
+|     anger|    1|  MAR|    14|
+|     anger|    1|  APR|    15|
+|     anger|    1|  MAY|    12|
+|     anger|    1|  JUN|    15|
+|     anger|    1|  JUL|    19|
+|     anger|    1|  AUG|    15|
+|     anger|    1|  SEP|    13|
+|     anger|    1|  OCT|     8|
+|     anger|    1|  NOV|    14|
+|     anger|    1|  DEC|    16|
+|marseilles|    1|  JAN|    21|
+|marseilles|    1|  FEB|    21|
+|marseilles|    1|  MAR|    21|
+|marseilles|    1|  APR|    27|
+|marseilles|    1|  MAY|    25|
+|marseilles|    1|  JUN|    25|
+|marseilles|    1|  JUL|    21|
+|marseilles|    1|  AUG|    22|
++----------+-----+-----+------+
+only showing top 20 rows
 ```
 
-Yields :
+```
+from pyspark.sql import functions as F
+
+#reference a column : either df.Income or F.col("Income")
+
+df_income = df.select(F.col("Income").alias("x_Income"))
+df_income.show()
+
++--------+
+|x_Income|
++--------+
+|      13|
+|      12|
+|      14|
+|      15|
+|      12|
+|      15|
+|      19|
+|      15|
+|      13|
+|       8|
+|      14|
+|      16|
+|      21|
+|      21|
+|      21|
+|      27|
+|      25|
+|      25|
+|      21|
+|      22|
++--------+
+only showing top 20 rows
+```
+
+## Monthly average
 
 ```
-(3619, 156)
-Overall monthly average by shop is  23
-Overall monthly average for the brand is  301
+df_income_avg = df.agg(F.sum(F.col("Income")/12).alias ("avg_income"))
+df_income_avg.show()
+
++-----------------+
+|       avg_income|
++-----------------+
+|301.5833333333334|
++-----------------+
 ```
 
-## Total revenue per city
+## Total per city
 
 ```
-tot_city = rdd_store.map( lambda row : (row[0], row[3]) )
-tot_city.collect()
+df_city = df.select(F.col("City"), F.col("Income")) \
+            .groupBy(F.col("City")) \
+            .agg(F.sum(F.col("Income")).alias("sum_income")) \
+            .orderBy(F.col("City"))
+            
+df_city.show()
 
-tot_city2 = tot_city.reduceByKey(lambda a,b : a+b)
-tot_city2.collect()
++----------+----------+
+|      City|sum_income|
++----------+----------+
+|     anger|       166|
+|      lyon|       193|
+|marseilles|       515|
+|    nantes|       207|
+|      nice|       203|
+|    orlean|       196|
+|     paris|      1568|
+|    rennes|       180|
+|  toulouse|       177|
+|    troyes|       214|
++----------+----------+
 ```
 
-yields :
+## Average monthly income of the shop in each city
 
 ```
-[('troyes', 214), ('paris', 1568), ('lyon', 193), ('toulouse', 177), ('anger', 166), ('orlean', 196), ('rennes', 180), ('nice', 203), ('marseilles', 515), ('nantes', 207)]
+df_avg_city = df_city.select(F.col("City"), (F.col("sum_income")/12).alias("avg_city"))
+df_avg_city.show()
+
++----------+------------------+
+|      City|          avg_city|
++----------+------------------+
+|     anger|13.833333333333334|
+|      lyon|16.083333333333332|
+|marseilles|42.916666666666664|
+|    nantes|             17.25|
+|      nice|16.916666666666668|
+|    orlean|16.333333333333332|
+|     paris|130.66666666666666|
+|    rennes|              15.0|
+|  toulouse|             14.75|
+|    troyes|17.833333333333332|
++----------+------------------+
 ```
 
-## Best shop each month
+## Total revenue per store per year
 
 ```
-max_shop = rdd_store.map( lambda row : (row[2], (row[0] + str(row[1]), row[3]) ) )
-max_shop2 = max_shop.reduceByKey(lambda a,b : a if (a[1] > b[1]) else b)
-max_shop2.collect()
+from pyspark.sql.functions import concat
+
+df_total_store = df.select(concat(df.City, df.Store).alias("city_store"), df.Income) \
+            .groupBy(F.col("city_store")) \
+            .agg(F.sum(F.col("Income")).alias("sum_income")) \
+            .orderBy(F.col("sum_income"))
+            
+df_total_store.show()
+
++-----------+----------+
+| city_store|sum_income|
++-----------+----------+
+|     anger1|       166|
+|  toulouse1|       177|
+|    rennes1|       180|
+|      lyon1|       193|
+|    orlean1|       196|
+|      nice1|       203|
+|    nantes1|       207|
+|    troyes1|       214|
+|marseilles2|       231|
+|marseilles1|       284|
+|     paris3|       330|
+|     paris1|       596|
+|     paris2|       642|
++-----------+----------+
 ```
 
-yields :
+OR
 
+``
+df_total_store_2 = df.select(df.City, df.Store, df.Income) \
+            .groupBy(F.col("City"), F.col("Store")) \
+            .agg(F.sum(F.col("Income")).alias("sum_income")) \
+            .orderBy(F.col("sum_income"))
+
+df_total_store_2.show()
+
++----------+-----+----------+
+|      City|Store|sum_income|
++----------+-----+----------+
+|     anger|    1|       166|
+|  toulouse|    1|       177|
+|    rennes|    1|       180|
+|      lyon|    1|       193|
+|    orlean|    1|       196|
+|      nice|    1|       203|
+|    nantes|    1|       207|
+|    troyes|    1|       214|
+|marseilles|    2|       231|
+|marseilles|    1|       284|
+|     paris|    3|       330|
+|     paris|    1|       596|
+|     paris|    2|       642|
++----------+-----+----------+
 ```
-[('FEB', ('paris2', 42)), ('AUG', ('paris2', 45)), ('APR', ('paris1', 57)), ('JUN', ('paris2', 85)), ('JUL', ('paris1', 61)), ('JAN', ('paris1', 51)), ('MAY', ('paris2', 72)), ('NOV', ('paris2', 64)), ('MAR', ('paris2', 44)), ('DEC', ('paris1', 71)), ('OCT', ('paris1', 68)), ('SEP', ('paris2', 63))]
-```
+
+## Best store of the month
+
+
+
+
+
+
+
+
+
