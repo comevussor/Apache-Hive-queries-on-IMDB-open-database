@@ -192,7 +192,7 @@ df_total_store.show()
 
 OR
 
-``
+```
 df_total_store_2 = df.select(df.City, df.Store, df.Income) \
             .groupBy(F.col("City"), F.col("Store")) \
             .agg(F.sum(F.col("Income")).alias("sum_income")) \
