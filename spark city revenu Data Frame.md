@@ -63,11 +63,13 @@ df.show(20)
 only showing top 20 rows
 ```
 
+## Select a column
+
+- `df.Income` : shorter and unambiguous
+- `F.col("Income")` : useful when chaining (don't know the name of the intermediate RDD) but risk of ambiguity
+
 ```
 from pyspark.sql import functions as F
-
-# reference a column : either df.Income or F.col("Income")
-
 df_income = df.select(F.col("Income").alias("x_Income"))
 df_income.show()
 
@@ -113,9 +115,10 @@ df_income_avg.show()
 
 ## Total per city
 
+Aggregation will select only `groupBy()` and `agg()` column(s) (pre-1999 SQL type). To get more columns, a joint is necessary (see below).
+
 ```
-df_city = df.select(F.col("City"), F.col("Income")) \
-            .groupBy(F.col("City")) \
+df_city = df.groupBy(F.col("City")) \
             .agg(F.sum(F.col("Income")).alias("sum_income")) \
             .orderBy(F.col("City"))
             
@@ -139,6 +142,8 @@ df_city.show()
 
 ## Average monthly income of the shop in each city
 
+Numerical transformation of a column.
+
 ```
 df_avg_city = df_city.select(F.col("City"), (F.col("sum_income")/12).alias("avg_city"))
 df_avg_city.show()
@@ -160,6 +165,8 @@ df_avg_city.show()
 ```
 
 ## Total revenue per store per year
+
+With `concat()`
 
 ```
 from pyspark.sql.functions import concat
@@ -190,7 +197,7 @@ df_total_store.show()
 +-----------+----------+
 ```
 
-OR
+OR without `concat()` but multiple `groupBy()` arguments
 
 ```
 df_total_store_2 = df.select(df.City, df.Store, df.Income) \
@@ -221,6 +228,8 @@ df_total_store_2.show()
 
 ## Best store of the month
 
+Create an intermediate table.
+
 ```
 df_best_store = df.select(df.Month.alias("Month"), df.City.alias("City"), df.Store, df.Income.alias("Income")) \
                     .groupBy(F.col("Month")) \
@@ -244,6 +253,10 @@ df_best_store.show()
 |  DEC|    71|
 +-----+------+
 ```
+
+Join original table and intermediate one. A `select()` is required to avoid duplicated columns.
+
+See also the month formatting.
 
 ```
 df_best_store_2 = df.join(df_best_store, ["Income", "Month"]) \
@@ -269,10 +282,3 @@ df_best_store_2.show()
 |  DEC|paris|    1|    71|
 +-----+-----+-----+------+
 ```
-
-
-
-
-
-
-
