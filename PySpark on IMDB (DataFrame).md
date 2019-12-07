@@ -184,6 +184,8 @@ title_basics.filter(~(F.col('genres').contains('Comedy'))) \
 
 ## Top 5 movies directed by Tarantino
 
+`left_semi` join allows returning only left columns, based on the inner join.
+
 ```
 top_five_bis = title_crew.withColumn('nconst', F.explode(F.split(title_crew.directors, ','))) \
                             .join(name_basics.filter(name_basics.primaryName == 'Quentin Tarantino'), 'nconst', 'left_semi')  \
@@ -206,5 +208,44 @@ top_five_bis.show(5)
 only showing top 5 rows
 ```
 
+Note that instead of exploding directors column, it is possible to create a user defined function (UDF) :
 
+```
+def is_from_QT (directors) :
+    if not directors : return false
+    return(QT_code_str in directors)
+    
+udf_if_from_QT = F.udf(is_from_QT)
+    
+title_crew_enrich = title_crew.withColumn("is_from_QT_col", udf_if_from_QT(F.col("directors"))) \
+                              .filter(F.col("is_from_QT_col") == "true") \
+                              .orderBy(F.col("tconst"))
+title_crew_enrich.show(20)
+
++---------+--------------------+--------------------+--------------+
+|   tconst|           directors|             writers|is_from_QT_col|
++---------+--------------------+--------------------+--------------+
+|tt0105236|           nm0000233| nm0000233,nm0000812|          true|
+|tt0108757|nm0650202,nm02518...|nm0000341,nm09513...|          true|
+|tt0110912|           nm0000233| nm0000233,nm0000812|          true|
+|tt0113101|nm0734319,nm00016...|nm0025978,nm07343...|          true|
+|tt0119396|           nm0000233| nm0000233,nm0001465|          true|
+|tt0247082|nm0258066,nm07885...|nm0958499,nm05788...|          true|
+|tt0266697|           nm0000233| nm0000233,nm0000235|          true|
+|tt0320037|nm1912959,nm04808...|nm0453994,nm04539...|          true|
+|tt0359715|           nm0000233| nm0357326,nm0000233|          true|
+|tt0361748| nm0000233,nm0744834|           nm0000233|          true|
+|tt0378194|           nm0000233| nm0000233,nm0000235|          true|
+|tt0401792|nm0000233,nm05883...|           nm0588340|          true|
+|tt0462322|nm0001675,nm07448...|nm0001675,nm09577...|          true|
+|tt0534695|           nm0000233|nm0958499,nm07881...|          true|
+|tt0534696|           nm0000233|nm0958499,nm07881...|          true|
+|tt0568048|           nm0000233| nm0000341,nm0940963|          true|
+|tt0615681| nm0000233,nm0874133| nm1089476,nm0453994|          true|
+|tt1028528|           nm0000233|           nm0000233|          true|
+|tt1853728|           nm0000233|           nm0000233|          true|
+|tt1959459| nm0000233,nm0536087| nm0536087,nm0000233|          true|
++---------+--------------------+--------------------+--------------+
+only showing top 20 rows
+```
 
