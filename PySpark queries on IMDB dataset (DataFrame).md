@@ -1,4 +1,4 @@
-# Spark queries on IMDB dataset
+# PySpark queries on IMDB dataset (DataFrame)
 
 Add a column to a table : `.withColumn("col_name")`
 
