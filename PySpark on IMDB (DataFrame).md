@@ -249,3 +249,32 @@ title_crew_enrich.show(20)
 only showing top 20 rows
 ```
 
+## Weighted average rating for titles less than 2 hours
+
+```
+weighted_avg =  title_basics.filter(F.col("runtimeMinutes")<=120) \
+                            .join(title_ratings, "tconst") \
+                            .withColumn("weighted_rating", F.col("averageRating")*F.col("numVotes")) \
+                            .agg(F.sum(F.col("weighted_rating")) / F.sum(F.col("numVotes")))
+
+weighted_avg.show(20)
+
++--------------------------------------+
+|(sum(weighted_rating) / sum(numVotes))|
++--------------------------------------+
+|                     7.036009318982757|
++--------------------------------------+
+
+
+normal_avg =  title_basics.filter(F.col("runtimeMinutes")<=120) \
+                            .join(title_ratings, "tconst") \
+                            .agg(F.avg(F.col("averageRating")))
+
+normal_avg.show(20)
+
++------------------+
+|avg(averageRating)|
++------------------+
+| 6.880091575609666|
++------------------+
+```
