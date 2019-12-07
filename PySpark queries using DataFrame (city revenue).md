@@ -1,4 +1,4 @@
-# Stats using dataframes in pyspark
+# PySpark queries using DataFrame (city revenue)
 
 I used Zeppelin notebook
 
