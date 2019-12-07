@@ -1,8 +1,5 @@
 # CAP theorem
 
-The content of this repository is my personal work based on the course given by Adaltas in DSTI in october 2019.
-
-## CAP theorem
 For any big data base we want :
 - Consistency : only one possible result for one query at a certain time
 - Availability : data is directly available without waiting for some synchronization time
