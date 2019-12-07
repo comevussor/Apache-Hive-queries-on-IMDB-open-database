@@ -10,8 +10,8 @@ Rows in a table are ordered by row key, distributed in subsets called regions, s
 Everything is stored in binary format.
 
 ## HBase components
-HBase master : responsible for creating a table and communicating with slaves. Usually with a stand by master attached for high availability.
-Region servers : slaves, answering the client, notifying the master, compacting
+- HBase master : responsible for creating a table and communicating with slaves. Usually with a stand by master attached for high availability.
+- Region servers : slaves, answering the client, notifying the master, compacting
 Zookeeper for high availability.
 
 If both masters think they are masters, we enter a split brain scenario, it is always very dangerous => needs shutdown.
