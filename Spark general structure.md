@@ -63,6 +63,20 @@ They can load data from different sources : Hive tables (transform and save unde
 
 By inheritance, dataframes are also immutable.
 
+# Kerberos
 
+Authentication mechanism by tickets allowing users to access services and services to communicate between each-other.
+
+- see my ticket : `klist`
+- request a ticket : `kinit`
+- delete a ticket : `kdestroy`
+
+Kerberos realms allow different clusters to be distributed on the same machines. A realm can "trust" another realm, means it delegates authentication.
+
+## Kerberos main component : Key Distribution Center KDC
+
+It has 2 components :
+- authentication service AS
+- Ticket Granting Service GTS
 
 
