@@ -78,7 +78,9 @@ It has 2 components :
 Each entity (user) has a principle : name@realm .
 
 - see my ticket : `klist`
-- request a ticket : `kinit`, sends a Ticket Granting Ticket (TGT) to AS
+- request a ticket : `kinit`, sends a Ticket Granting Ticket (TGT) request to AS, receives an initial ticket.
 - delete a ticket : `kdestroy`
 
 If I try `hdfs dfs -ls`, it will sent a TGT to TGS and get a specific ticket (Ticket Service TS) from it. I sent my request with TS to Name Node (NN) to get my request processed.
+
+example : use Kerberos to authenticate on a webserver. After authentication, SPNEGO protocol allows putting TGT in http protocol through base64 encapsulating (put anyting into string) of TS into a header authentication : Negociate + token with token = base64(TS).
