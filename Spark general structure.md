@@ -67,10 +67,6 @@ By inheritance, dataframes are also immutable.
 
 Authentication mechanism by tickets allowing users to access services and services to communicate between each-other.
 
-- see my ticket : `klist`
-- request a ticket : `kinit`
-- delete a ticket : `kdestroy`
-
 Kerberos realms allow different clusters to be distributed on the same machines. A realm can "trust" another realm, means it delegates authentication.
 
 ## Kerberos main component : Key Distribution Center KDC
@@ -79,4 +75,10 @@ It has 2 components :
 - authentication service AS
 - Ticket Granting Service GTS
 
+Each entity (user) has a principle : name@realm .
 
+- see my ticket : `klist`
+- request a ticket : `kinit`, sends a Ticket Granting Ticket (TGT) to AS
+- delete a ticket : `kdestroy`
+
+If I try `hdfs dfs -ls`, it will sent a TGT to TGS and get a specific ticket (Ticket Service TS) from it. I sent my request with TS to Name Node (NN) to get my request processed.
