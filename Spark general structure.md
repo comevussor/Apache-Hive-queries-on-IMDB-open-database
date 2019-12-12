@@ -63,13 +63,15 @@ They can load data from different sources : Hive tables (transform and save unde
 
 By inheritance, dataframes are also immutable.
 
-# Kerberos
+# Security
+
+Kerberos
 
 Authentication mechanism by tickets allowing users to access services and services to communicate between each-other.
 
 Kerberos realms allow different clusters to be distributed on the same machines. A realm can "trust" another realm, means it delegates authentication.
 
-## Kerberos main component : Key Distribution Center KDC
+Kerberos main component : Key Distribution Center KDC
 
 It has 2 components :
 - authentication service AS
@@ -84,3 +86,20 @@ Each entity (user) has a principle : name@realm .
 If I try `hdfs dfs -ls`, it will sent a TGT to TGS and get a specific ticket (Ticket Service TS) from it. I sent my request with TS to Name Node (NN) to get my request processed.
 
 example : use Kerberos to authenticate on a webserver. After authentication, SPNEGO protocol allows putting TGT in http protocol through base64 encapsulating (put anyting into string) of TS into a header authentication : Negociate + token with token = base64(TS).
+
+Apache Knox service encapsulates SPNGO into LDAP authentication.
+
+Apache Ranger deals with authorization :
+- HDFS : who can access (r, w, x)
+- YARN : who, in which queue
+- Hive tables
+- HBase tables
+- Knox topologies
+- Kafka topics
+
+Any service in the cluster as a Ranger plugin
+
+In the end, security is ensured like that :
+- identification is ensured by LDAP
+- authentication is ensured by Kerberos
+- authorisation is ensured by Ranger
