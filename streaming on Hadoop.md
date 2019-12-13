@@ -40,6 +40,11 @@ Stream processing problematics
 Dataflow model (Google model) :
 - what results ar calulated ? aggregations
 - where in event time are result calculated ? windows
-- when in processing time are result materialized ?
-- how do refinements of results relate ?
+- when in processing time are results materialized ? trigger (eg. every 10' if there is a new event)
+- how do refinements of results relate ? 
+  - discarding : send each result separately
+  - accumulating : send the aggregated result
+  - both
+  
+Streaming (Apache Flink each event is computed separately, Google dataflow) vs micro-batching (Spark streaming) 
 
