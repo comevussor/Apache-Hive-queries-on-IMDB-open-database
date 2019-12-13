@@ -35,5 +35,11 @@ Stream processing problematics
   - sessions : based on activity
 - time marking : 
   - watermark : gives a deadline (processing time P) from which it is assumed that all data generated prior to an event time E have been observed, not always true, may discard some messages
-  - trigger : time to execute processing
+  - trigger : time to materialize results
   
+Dataflow model (Google model) :
+- what results ar calulated ? aggregations
+- where in event time are result calculated ? windows
+- when in processing time are result materialized ?
+- how do refinements of results relate ?
+
