@@ -27,3 +27,13 @@ Main opensource solutions : Apache Kafka and RabbitMQ. Both rely on publish-subs
 - Mid/long term storage
 - Good integration with Hadoop ecosystem (Spark, Hive) : can query Kafka topics with Hive
     
+Stream processing problematics
+- event time vs processing time : difference is called skew
+- we define time "windows" :
+  - fixed : compute every 10 minutes
+  - sliding windows : one 20' window every 10'
+  - sessions : based on activity
+- time marking : 
+  - watermark : gives a deadline (processing time P) from which it is assumed that all data generated prior to an event time E have been observed, not always true, may discard some messages
+  - trigger : time to execute processing
+  
