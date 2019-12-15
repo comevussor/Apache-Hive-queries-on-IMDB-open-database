@@ -1,6 +1,6 @@
 # Spark
 
-[travel](#Spark core RDD)
+[travel](#spark-core-rdd)
 
 Having data in memory allows streaming, avoids I/O operations.
 
