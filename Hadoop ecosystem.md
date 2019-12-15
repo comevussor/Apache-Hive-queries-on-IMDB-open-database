@@ -4,9 +4,7 @@ Content :
 
 [CAP theorem](#cap-theorem) and [Acid transactions](#acid-transactions)
 
-[HDFS](#hdfs)
-
-[YARN](€yarn)
+[HDFS](#hdfs) ; [YARN](€yarn) ; [Map-Reduce algorithm](#map-reduce-algorithm), [MapReduce2 environement](#mapreduce2-environement)
 
 [HBase](#hbase) : [Design](#design), [HBase components](#hbase-components), [Create and fill a table](#create-and-fill-a-table), [Query HBase](#query-hbase)
 
@@ -139,6 +137,21 @@ The Resource Manager is the master daemon of YARN : it receives processing reque
 The Node Manager, on each worker, manages workflow on a particular node, create and kills containers.
 
 The application is launched from the application master container which sends health reports to application manager.
+
+# Map-Reduce algorithm
+
+map : extract and calculate on each tuple (row), easy to parallelize because calculations are independent
+reduce : group information, partially parallelized in a hierarchical manner
+
+## MapReduce2 environement
+
+It is a Java environement for writing programs intended for YARN.
+
+Data is processed as key-value pairs :
+- Map function receives a pair as input and can produce 0, 1 or many pairs as output. It works as if one instance of Map is launched for each row.
+- Reduce function receives a list of pairs with tha same key as input and usually produces only 1 pair as output. It works as if one instance of Reduce is launched for each different key.
+
+To design the applicaiton, think carefully about how to chose keys and values. KNOW YOUR DATA.
 
 # HBase
 
