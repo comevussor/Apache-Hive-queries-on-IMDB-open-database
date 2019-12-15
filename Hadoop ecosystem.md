@@ -31,7 +31,7 @@ A **cluster** is a set of interconnected servers in a data center.
 
 ## Hadoop solution
 Distribution of data and processing implies :
-- a specific file system : Hadoop Distributed File System **HDFS** (java based). Data is stored in 128Mb containers.
+- a specific file system : Hadoop Distributed File System **HDFS** (java based). Data is stored in 128Mb block.
 - specific databases : NoSQL, HBase, ElasticSearch
 - map and reduce parallelized algorithms running on Yet Another Resource Negociator **YARN**
 
@@ -68,7 +68,7 @@ We use Hortonworks Hadoop Distribution : **Hortonworks Data Platform**
 Example of Basic architecture :
 - All nodes should have same OS and config
 - Master nodes : each master has a stand-by twin, Zookeeper is installed on an even number of master nodes
-  - Name Node : managing HDFS to locate files
+  - Name Node : managing HDFS blocks to locate files. Maximum 2 secondary name nodes are constantly updated with journal nodes distributed service. ZKFC ZooKeeperFailoverController ensures that only one namenode is active at a time.
   - Resource Manager : handling YARN
   - Hiver Server
   - HBase master
@@ -111,7 +111,34 @@ HBase is a consistent (CP) type of DB. Cassandra is available (AP).
 
 # HDFS
 
+Files and folders are in a tree (like UNIX) on a large number of machines, with multiple copies for reliability and multiple simultaneous access. It is always better to have few big files than lots of small ones. By default, each block is copied on 3 machines : 2 on a same rack and 1 on a second rack.
+
+Uner the root `/`, there are :
+- Hadoop services directories : `/hbase, /tmp, /var`
+- user directories : `/user/hive, /user/history, /user/spark, /user/username`
+- shared files : `/share`
+
+It is a One Write Multiple Read system : no update, only append.
+
+In Linux, manage HDFS with `hdfs dfs` commands.
+
 # YARN
+
+An application is a single job submitted to a framework.
+
+A container is a collection of physical resources (RAM, CPU, disk) on a single node. They are created from a Container Launch Context (CLC).
+
+- dynamically allocates resources and schedules application processsing
+- supports map-reduce applications.
+- allows multiple engine access
+
+The Resource Manager is the master daemon of YARN : it receives processing requests, forwards them to a node manager and allocates resources for the completion of the request. It's main components are :
+- capacity scheduler : pure scheduler, does not guarantee a restart if task fails, handles queues
+- application manager : negociates the first container (application master container) and restarts it if task fails
+
+The Node Manager, on each worker, manages workflow on a particular node, create and kills containers.
+
+The application is launched from the application master container which sends health reports to application manager.
 
 # HBase
 
