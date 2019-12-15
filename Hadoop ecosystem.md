@@ -4,6 +4,10 @@ Content :
 
 [CAP theorem](#cap-theorem) and [Acid transactions](#acid-transactions)
 
+[HDFS](#hdfs)
+
+[YARN](€yarn)
+
 [HBase](#hbase) : [Design](#design), [HBase components](#hbase-components), [Create and fill a table](#create-and-fill-a-table), [Query HBase](#query-hbase)
 
 [Spark](spark) : [How to use Spark](#how-to-use-spark), [Spark core RDD](#spark-core-rdd), [Spark internals](#spark-internals), [Dataframes](#dataframes)
@@ -27,20 +31,20 @@ A **cluster** is a set of interconnected servers in a data center.
 
 ## Hadoop solution
 Distribution of data and processing implies :
-- a specific file system : Hadoop Distributed File System **HDFS** (java based)
+- a specific file system : Hadoop Distributed File System **HDFS** (java based). Data is stored in 128Mb containers.
 - specific databases : NoSQL, HBase, ElasticSearch
 - map and reduce parallelized algorithms running on Yet Another Resource Negociator **YARN**
 
 We use Hortonworks Hadoop Distribution : **Hortonworks Data Platform**
 - Operations
   - Apache Ambari : web-based framework to provision, manage and monitor Hadoop cluster
-  - Apache Zookeeper : coordination service for distributed applications
+  - Apache Zookeeper : coordination service for distributed applications, ensure high availability
   - Hortonworks Cloudbreak : provision and manage Hadoop cluster in the cloud
   - Apache Oozie : workflow scheduler for Hadoop jobs
 - Integration
   - Apache Hadoop WebHDFS : REST API to manage HDFS through HTTP
   - Apache Flume : collect, aggregate, move streaming data (removed)
-  - Apache Sqoop : import and export data between Hadoop and RDBMS
+  - Apache Sqoop : import and export data between Hadoop and RDBMS, quick and dirty
   - Apache Atlas : governance services to meet compliance and data integration requirements
 - Streaming
   - Apache **NiFi** : directed graphs of data routing, transformation and system mediation logic
@@ -49,7 +53,7 @@ We use Hortonworks Hadoop Distribution : **Hortonworks Data Platform**
   - Apache Storm : realtime processing of unbounded data
 - Security
   - Apache Knox : gateway providing perimeter security to a Hadoop cluster
-  - Apache Ranger : fine-grained policy controls for HDFS, Hive, HBase, Knox, Storm, Kafka, Solr
+  - Apache Ranger : fine-grained policy controls for HDFS, Hive, HBase, Knox, Storm, Kafka, Solr (handling rights)
   - (Kerberos protocol : authentication through tickets developped by MIT)
 - Data access
   - Apache Pig : extract, transform and analyze datasets (forget it)
@@ -57,7 +61,8 @@ We use Hortonworks Hadoop Distribution : **Hortonworks Data Platform**
   - Apache **HBase** : NoSQL database that supports structured data storage for large tables
   - Apache Phoenix : SQL layer to porovie low-latency access to HBase data
   - Apache Solr : distributed search platform to index PB of data (built on Apache Lucene)
-  - Apache **Spark** : general purpose processing engine to build and run SQL, streaming, machine learning, or graphic applications
+  - Apache **Spark** : general purpose processing engine (framework) to build and run SQL, streaming, machine learning, or graphic applications
+  - Apache Hadoop **MapReduce** : is also a framework for distributing processing, like Spark
   - Apache **Zeppelin** : web-based notebook for data analytics (many possible languages)
 
 Example of Basic architecture :
@@ -71,7 +76,7 @@ Example of Basic architecture :
   - Knox with client gateway, connected to web services through HTTP
   - Ambari Server with client gateway
 - Many worker nodes, each one with a Node Manager (for YARN) and a Data Node (for HDFS). If HBase is present, they also have a Region Server.
-- Edge nodes : used to connect with masters through clients like Beeline for HBase.
+- Edge nodes : used to connect with masters through clients like Beeline for HBase. We connect to edge nodes through ssh.
 
 ## For Business
 Business strategies :
@@ -103,6 +108,10 @@ HBase is a consistent (CP) type of DB. Cassandra is available (AP).
 - Consistency : succeed or come back to previous state
 - Isolation : different users don't see each other's work
 - Durability : once transaction is done, database is updated even if there is a crash
+
+# HDFS
+
+# YARN
 
 # HBase
 
