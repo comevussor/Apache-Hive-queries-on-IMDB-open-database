@@ -2,10 +2,15 @@ Content :
 
 [Hadoop ecosystem](#hadoop-ecosystem) : [Hadoop solution](#hadoop-solution), [For business](#for-business)
 
+[CAP theorem](#cap-theorem) and [Acid transactions](#acid-transactions)
 
+[HBase](#hbase) : [Design](#design), [HBase components](#hbase-components), [Create and fill a table](#create-and-fill-a-table), [Query HBase](#query-hbase)
 
+[Spark](spark) : [How to use Spark](#how-to-use-spark), [Spark core RDD](#spark-core-rdd), [Spark internals](#spark-internals), [Dataframes](#dataframes)
 
+[Security with Kerberos](#security-with-kerberos)
 
+[Streaming on Hadoop](#streaming-on-hadoop) : [Principles](#principles), [Apache Kafka](#apache-kafka), [Data flows](#data-flows), [ApacheNiFi](#apache-nifi)
 
 
 # Hadoop ecosystem
@@ -106,9 +111,7 @@ A table is defined with a set of column families + a column for row key.
 Columns are added at filling time on the fly.
 No need to fill empty fields with Null values.
 
-## HBase on HDFS
-Rows in a table are ordered by row key, distributed in subsets called regions, stored in the worker nodes of the cluster.
-Everything is stored in binary format.
+HBase on HDFS : Rows in a table are ordered by row key, distributed in subsets called regions, stored in the worker nodes of the cluster. Everything is stored in binary format.
 
 ## HBase components
 - HBase master : responsible for creating a table and communicating with slaves. Usually with a stand by master attached for high availability.
@@ -299,6 +302,7 @@ In the end, security is ensured like that :
 
 # Streaming on Hadoop
 
+## Principles
 We are dealing with :
 - unbounded data sets (produced continuously)
 - unbounded data processing (in time)
