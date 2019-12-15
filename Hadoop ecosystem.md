@@ -6,7 +6,7 @@ Content :
 
 [HDFS](#hdfs) ; [YARN](€yarn) ; [Map-Reduce algorithm](#map-reduce-algorithm), [MapReduce2 environement](#mapreduce2-environement)
 
-[Hive data storage](#hive-data-storage)
+[Hive](#hive)
 
 [HBase](#hbase) : [Design](#design), [HBase components](#hbase-components), [Create and fill a table](#create-and-fill-a-table), [Query HBase](#query-hbase)
 
@@ -182,6 +182,10 @@ Hive components :
 - Hive metastore : schema info and some aggregation results
 - Beelin client (JDBC conneciton)
 - Zookeeper
+
+In Hive, a database can be partitionned (according to the value of a certain field for instance) and partitions can be bucketted. It is possible to query on some buckets only.
+
+It is also possible to have views that are bufferized and regularly updated. Also possible to set up caching (Hive LLAP).
 
 # HBase
 
