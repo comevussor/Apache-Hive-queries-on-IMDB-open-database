@@ -6,6 +6,8 @@ Content :
 
 [HDFS](#hdfs) ; [YARN](€yarn) ; [Map-Reduce algorithm](#map-reduce-algorithm), [MapReduce2 environement](#mapreduce2-environement)
 
+[Hive data storage](#hive-data-storage)
+
 [HBase](#hbase) : [Design](#design), [HBase components](#hbase-components), [Create and fill a table](#create-and-fill-a-table), [Query HBase](#query-hbase)
 
 [Spark](spark) : [How to use Spark](#how-to-use-spark), [Spark core RDD](#spark-core-rdd), [Spark internals](#spark-internals), [Dataframes](#dataframes)
@@ -23,11 +25,24 @@ Big Data is characterized by :
 - Volume : tera 10^12, peta 10^15, exa 10^18 => storage cost, question of data relevance
 - Velocity : need for fast ingestion, fast analysis, address periodic peaks
 
+Examples of semi-structured data : json and xml files, documents store (MongoDB), graph (entities and relations with properties), key-value store (Redis), **column store** (good for aggregation)
+
+Examples of unstructured data : image, text, videos, logs, mails
+
 Processing big data requires to distribute data accross multiple machines in **Data Centers**.
+
+Processing can be :
+- OLTP : online linear transaction processing
+- OLAP : online linear analytic processing
+
+We focus on OLAP.
 
 A **cluster** is a set of interconnected servers in a data center.
 
+Design is made to avoid any Single Point Of Failure (SPOF)
+
 ## Hadoop solution
+
 Distribution of data and processing implies :
 - a specific file system : Hadoop Distributed File System **HDFS** (java based). Data is stored in 128Mb block.
 - specific databases : NoSQL, HBase, ElasticSearch
@@ -116,7 +131,7 @@ Uner the root `/`, there are :
 - user directories : `/user/hive, /user/history, /user/spark, /user/username`
 - shared files : `/share`
 
-It is a One Write Multiple Read system : no update, only append.
+It is a Write Once Read Many (**WORM**) system : no update, only append.
 
 In Linux, manage HDFS with `hdfs dfs` commands.
 
@@ -136,9 +151,11 @@ The Resource Manager is the master daemon of YARN : it receives processing reque
 
 The Node Manager, on each worker, manages workflow on a particular node, create and kills containers.
 
-The application is launched from the application master container which sends health reports to application manager.
+The application is launched from the application master container which sends health reports to application manager. It negociates resources with resources manager and open other containers on othe worker nodes.
 
 # Map-Reduce algorithm
+
+**Data is on HDFS** => better than Spark for huge dataset
 
 map : extract and calculate on each tuple (row), easy to parallelize because calculations are independent
 reduce : group information, partially parallelized in a hierarchical manner
@@ -149,9 +166,22 @@ It is a Java environement for writing programs intended for YARN.
 
 Data is processed as key-value pairs :
 - Map function receives a pair as input and can produce 0, 1 or many pairs as output. It works as if one instance of Map is launched for each row.
+- Result is shuffled (re-arranged, sorted) before reducing.
 - Reduce function receives a list of pairs with tha same key as input and usually produces only 1 pair as output. It works as if one instance of Reduce is launched for each different key.
 
 To design the applicaiton, think carefully about how to chose keys and values. KNOW YOUR DATA.
+
+# Hive
+
+Hive is a way to query files in HDFS with SQL : it translates SQL to jobs that can be MapReduce (more HDFS, more I/O) or Tez (more RAM) or even Spark (more RAM).
+
+Hive data storage : raw file (csv) is connected to an external table (only structure) in Hive, and used to fill an internal table on `.orc` format.
+
+Hive components :
+- Hive server : translates SQL to jobs, with stand by servers
+- Hive metastore : schema info and some aggregation results
+- Beelin client (JDBC conneciton)
+- Zookeeper
 
 # HBase
 
@@ -247,7 +277,9 @@ The WAL is replayed by the new region server to get the missing RAM data.
 During this process, the data is not available...
 
 
-# Spark
+# Spark 
+
+**Data is loaded in RAM***
 
 Having data in memory allows streaming, avoids I/O operations.
 
