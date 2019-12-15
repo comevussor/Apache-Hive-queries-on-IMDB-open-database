@@ -56,7 +56,34 @@ Example of Basic architecture :
 - Many worker nodes, each one with a Node Manager (for YARN) and a Data Node (for HDFS). If HBase is present, they also have a Region Server.
 - Edge nodes : used to connect with masters through clients like Beeline for HBase.
 
+Business strategies :
+- data discovery : diversify internal and external sources
+- single view : build dashboards to watch priorities
+- decide based on predictive analytics : reduce uncertainty, prevent failures, predict capacity requirements, recommend customers, no surprise
 
+Cost saving approach :
+- active archive : lower storage cost, store any kind of data, long term storage, ingest more, easy to access old data
+- extract transform load : better capacity allocation, don't ignore difficult to transform data, get access to raw data, value all data
+- data enrichment : combine data sources
 
+## CAP theorem
+
+For any big data base we want :
+- Consistency : only one possible result for one query at a certain time
+- Availability : data is directly available without waiting for some synchronization time
+- Partition tolerance
+
+BUT unfortunately, only 2 conditions out of 3 can be achieved simulaneously !
+
+When dealing with big data, we need partition tolerance. Therefore we have to choose between availability and consistency.
+For selling online, we would rather choose availability but for banking, we need consistency.
+
+HBase is a consistent (CP) type of DB. Cassandra is available (AP).
+
+## ACID transactions 
+- Atomicity : transactions are processed at once, no intermediate operation
+- Consistency : succeed or come back to previous state
+- Isolation : different users don't see each other's work
+- Durability : once transaction is done, database is updated even if there is a crash
 
 
