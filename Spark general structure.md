@@ -1,7 +1,5 @@
 # Spark
 
-## Spark core RDD
-
 Having data in memory allows streaming, avoids I/O operations.
 
 Spark is an in-memory process engine, running on Hadoop : can use data from HDFS, Hive..., can distribute processing.
