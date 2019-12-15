@@ -1,5 +1,16 @@
+Content :
+
+[Hadoop ecosystem](#hadoop-ecosystem) : [Hadoop solution](#hadoop-solution), [For business](#for-business)
+
+
+
+
+
+
+
 # Hadoop ecosystem
 
+## What is Big Data ?
 Big Data is characterized by :
 - Variety : structured, semi-structured, unstructured data => need to link, mach, cleanse, transform
 - Volume : tera 10^12, peta 10^15, exa 10^18 => storage cost, question of data relevance
@@ -9,6 +20,7 @@ Processing big data requires to distribute data accross multiple machines in **D
 
 A **cluster** is a set of interconnected servers in a data center.
 
+## Hadoop solution
 Distribution of data and processing implies :
 - a specific file system : Hadoop Distributed File System **HDFS** (java based)
 - specific databases : NoSQL, HBase, ElasticSearch
@@ -56,6 +68,7 @@ Example of Basic architecture :
 - Many worker nodes, each one with a Node Manager (for YARN) and a Data Node (for HDFS). If HBase is present, they also have a Region Server.
 - Edge nodes : used to connect with masters through clients like Beeline for HBase.
 
+## For Business
 Business strategies :
 - data discovery : diversify internal and external sources
 - single view : build dashboards to watch priorities
@@ -66,7 +79,7 @@ Cost saving approach :
 - extract transform load : better capacity allocation, don't ignore difficult to transform data, get access to raw data, value all data
 - data enrichment : combine data sources
 
-## CAP theorem
+# CAP theorem
 
 For any big data base we want :
 - Consistency : only one possible result for one query at a certain time
@@ -80,7 +93,7 @@ For selling online, we would rather choose availability but for banking, we need
 
 HBase is a consistent (CP) type of DB. Cassandra is available (AP).
 
-## ACID transactions 
+# ACID transactions 
 - Atomicity : transactions are processed at once, no intermediate operation
 - Consistency : succeed or come back to previous state
 - Isolation : different users don't see each other's work
@@ -247,17 +260,13 @@ They can load data from different sources : Hive tables (transform and save unde
 
 By inheritance, dataframes are also immutable.
 
-# Security
+# Security with Kerberos
 
-Kerberos
-
-Authentication mechanism by tickets allowing users to access services and services to communicate between each-other.
-
-Kerberos realms allow different clusters to be distributed on the same machines. A realm can "trust" another realm, means it delegates authentication.
+Authentication mechanism by tickets allowing users to access services and services to communicate between each-other. Kerberos realms allow different clusters to be distributed on the same machines. A realm can "trust" another realm, means it delegates authentication.
 
 Kerberos main component : Key Distribution Center KDC
 
-It has 2 components :
+KDC has 2 components :
 - authentication service AS
 - Ticket Granting Service GTS
 
@@ -271,7 +280,7 @@ If I try `hdfs dfs -ls`, it will sent a TGT to TGS and get a specific ticket (Ti
 
 example : use Kerberos to authenticate on a webserver. After authentication, SPNEGO protocol allows putting TGT in http protocol through base64 encapsulating (put anyting into string) of TS into a header authentication : Negociate + token with token = base64(TS).
 
-Apache Knox service encapsulates SPNGO into LDAP authentication.
+**Apache Knox** service encapsulates SPNGO into LDAP authentication.
 
 Apache Ranger deals with authorization :
 - HDFS : who can access (r, w, x)
